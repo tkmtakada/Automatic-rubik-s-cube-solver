@@ -3,7 +3,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (ros::load-ros-manifest "dynamixel_msgs") ;; dynamixelのメッセージを用いるためのload設定
-(ros::load-ros-manifest "dynamixel_12dof_arm") ;; dynamixelのメッセージを用いるためのload設定
 (ros::roseus "test_arm") ;; ros initを行う
 
 ;; 7自由度分いっぺんに動かすサンプルになっているが、
@@ -32,64 +31,6 @@
   (ros::advertise (format nil "/arm_j~d_controller/command" (1+ i)) ;; topic名
                   std_msgs::Float64 ;; topicの型
                   1)) ;; キューの数
-(ros::advertise "/isReady" std_msgs::Float64 1)
-(ros::rate 100)
-
-;; my subscribeの設定
-;; my_cb_func
-(defun plz_rotate_cb (msg)
-    (print "rotate cube")
-
-    ;;two fingers are open --> close all fingers
-    (close_gripper hand1_1)
-    (close_gripper hand1_2)
-    (close_gripper hand2_1)
-    (close_gripper hand2_2)
-    (unix:usleep short_interval)
-
-    ;;open only two fingers
-    (open_gripper hand1_1)
-    (open_gripper hand2_2)
-    (unix:usleep short_interval)
-
-    ;; publish isReady
-    (ros::publish "/isReady" (instance std_msgs::Float64 :init :data 1.0))
-    (unix:usleep long_interval)
-    (unix:usleep long_interval)
-    (unix:usleep long_interval)
-
-    ;;close all fingers
-    (close_gripper hand1_1)
-    (close_gripper hand1_2)
-    (close_gripper hand2_1)
-    (close_gripper hand2_2)
-    (unix:usleep short_interval)
-
-    ;; rotate_cube
-    (rotate_cube1)
-    (unix:usleep short_interval)
-  )
-;;subscriber
-(ros::subscribe "/plz_rotate";; name of topoic you want to subscribe
-                std_msgs::Float64
-                #'plz_rotate_cb)
-;; advertise は上のやつでもう十分？？
-
-
-;;(unix:usleep long_interval);; somehow create error
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun solution_cb (msg)
-  (print "Received the solution!")
-  (print "start solving...")
-  (setq vec (send msg :data))
-  (setq lst (coerce vec cons))
-   (solve_cube lst)
- )
-;;;; subscriber
-(ros::subscribe "/solution" dynamixel_12dof_arm::Num;;Dynamixel_12dof_arm:Num
-  #'solution_cb)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -138,7 +79,6 @@
 (warn ";; (test-send-angle-vector-loop :move nil) ~%")
 (warn ";; (test-send-angle-vector-loop :move t) ~%")
 
-
 ;; 自主プロ
 (setq hand1_1 (list 0 1 2)) ; 0が手首、１，２が指
 (setq hand1_2 (list 3 4 5))
@@ -152,7 +92,6 @@
 (setq rotate_degree 90)
 (setq rotate_degree_inv -90)
 (setq rotate_degree_half 180)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic module functions
@@ -531,6 +470,34 @@
            )
     )
 
+(defun hold ()
+    (print "rotate cube")
+    ;;two fingers are open --> close all fingers
+    (close_gripper hand1_1)
+    (close_gripper hand1_2)
+    (close_gripper hand2_1)
+    (close_gripper hand2_2)
+    (unix:usleep short_interval)
+    ;;open only two fingers
+    (open_gripper hand1_1)
+    (open_gripper hand2_2)
+    (unix:usleep short_interval)
+    ;; publish isReady
+
+    (unix:usleep long_interval)
+    (unix:usleep long_interval)
+    (unix:usleep long_interval)
+    (read-line)
+    ;;close all fingers
+    (close_gripper hand1_1)
+    (close_gripper hand1_2)
+    (close_gripper hand2_1)
+    (close_gripper hand2_2)
+    (unix:usleep short_interval)
+    ;; rotate_cube
+    (rotate_cube1)
+    (unix:usleep short_interval)
+  )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;     main program
 ;;
@@ -538,11 +505,11 @@
 ;;        'solution' Num camera --> robot
 ;;        'isReady' Float64 robot --> camera
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(unix:usleep long_interval)
-(reset-av)
-(set_cube)
-(print "waiting....")
-(plz_rotate_cb 1.0);; originally this shd be done manuaaly
+;(unix:usleep long_interval)
+;(reset-av)
+;(set_cube)
+;(print "waiting....")
+;(plz_rotate_cb 1.0);; originally this shd be done manuaaly
 ;; this do until key is no harm, but unnecessary.
 ;;(do-until-key
 ;;  (unix:usleep mid_interval)
@@ -560,4 +527,4 @@
 ;;  ２回目　robot --> camera on "isReady" [準備したそ、スキャンしろ]
 ;;　camera --> robot on "solution" [３面スキャン終わった、答え送ったからこれどおりに溶け]
 ;;
-(ros::spin)
+;;(ros::spin)

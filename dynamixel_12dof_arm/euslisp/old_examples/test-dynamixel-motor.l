@@ -2,10 +2,10 @@
 ;; 必要なファイルのロードとROSのtopicのsubscribe/advertise設定
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(ros::load-ros-manifest "dynamixel_workbench_msgs") ;; dynamixelのメッセージを用いるためのload設定
+(ros::load-ros-manifest "dynamixel_msgs") ;; dynamixelのメッセージを用いるためのload設定
 (ros::roseus "test_arm") ;; ros initを行う
 
-;; 7自由度分いっぺんに動かすサンプルになっているが、
+;; 7自由度分いっぺんに動かすサンプルになっているが、s
 ;; いずれも1軸ずつ動かすことができる
 (defvar *arm-dof* 7)
 (setq *state-list* (make-list *arm-dof*))

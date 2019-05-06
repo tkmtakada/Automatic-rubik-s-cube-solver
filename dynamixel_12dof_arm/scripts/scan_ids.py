@@ -17,18 +17,18 @@ if __name__ == '__main__':
                       help='connection to serial port will be established at BAUD bps [default: %default]')
     parser.add_option('-f', '--from-id', metavar='FROM_ID', type="int", default=1,
                       help='from id [default: %default]')
-    parser.add_option('-t', '--to-id', metavar='TO_ID', type="int", default=7,
+    parser.add_option('-t', '--to-id', metavar='TO_ID', type="int", default=12,
                       help='to id [default: %default]')
-                      
+
     (options, args) = parser.parse_args(sys.argv)
-    
+
     if len(args) < 1:
         parser.print_help()
         exit(1)
-        
+
     port = options.port
     baudrate = options.baud
-    
+
     try:
         dxl_io = dynamixel_io.DynamixelIO(port, baudrate)
     except dynamixel_io.SerialOpenError, soe:

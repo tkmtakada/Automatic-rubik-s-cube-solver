@@ -84,7 +84,8 @@
   (print "start solving...")
   (setq vec (send msg :data))
   (setq lst (coerce vec cons))
-   (solve_cube lst)
+  ;; (solve_cube lst)
+  (set_cube)
  )
 ;;;; subscriber
 (ros::subscribe "/solution" dynamixel_12dof_arm::Num;;Dynamixel_12dof_arm:Num

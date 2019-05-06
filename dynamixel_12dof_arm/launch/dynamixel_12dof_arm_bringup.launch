@@ -33,29 +33,11 @@
                 arm_j9_controller
                 arm_j10_controller
                 arm_j11_controller
-                arm_j12_controller
-                gripper_joint_controller"
+                arm_j12_controller"
           output="screen"/>
 
     <!-- start trajectory controllers for fullbody + gripper -->
-    <node name="dynamixel_trajectory_controller_spawner_for_fullbody" pkg="dynamixel_controllers" type="controller_spawner.py"
-          args="--manager=dxl_manager
-                --port=12dof_arm_port
-                --type=meta
-                fullbody_controller
-                arm_j1_controller
-                arm_j2_controller
-                arm_j3_controller
-                arm_j4_controller
-                arm_j5_controller
-                arm_j6_controller
-                arm_j7_controller
-                arm_j8_controller
-                arm_j9_controller
-                arm_j10_controller
-                arm_j11_controller
-                arm_j12_controller"
-          output="screen"/>
+
 
     <!-- TODO : Should use gripper_controller_spawner.launch instead of .sh ;; timing problem -->
     <node name="dynamixel_trajectory_script" pkg="dynamixel_12dof_arm" type="gripper_controller_spawner.sh" output="screen"/>
